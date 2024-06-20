@@ -1,0 +1,10 @@
+[Unit]
+Description=Memory Monitor Service
+
+[Service]
+Type=simple
+ExecStart=/home/jake/.config/systemd/user/script.sh
+Restart=always
+
+[Install]
+WantedBy=multi-user.target

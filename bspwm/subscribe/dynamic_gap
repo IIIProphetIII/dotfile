@@ -1,0 +1,24 @@
+#!/bin/bash
+max_gap=100
+min_gap=5
+bspc subscribe all | while read line
+do
+  tiled=$(bspc query -N -d $somedesktop -n .window.tiled | wc -l)
+  pseudo_tiled=$(bspc query -N -d $somedesktop -n .window.pseudo_tiled | wc -l)
+  if [ $tiled -eq 1 ] && [ $pseudo_tiled -eq 0 ]
+  then
+    tiled_id=$(bspc query -N -d $somedesktop -n .window.tiled)
+    bspc node $tiled_id -t pseudo_tiled
+  fi
+  n=$(($tiled+$pseudo_tiled))
+  if [ $n -gt 1 ]
+  then
+    bspc query -N -n .pseudo_tiled | xargs -I{} bspc node {} -t tiled
+  fi
+  gap=$(($max_gap / $((3 ** $n))))
+  if [ $gap -lt $min_gap ]
+  then
+    gap=$min_gap
+  fi
+  bspc config window_gap $gap
+done
